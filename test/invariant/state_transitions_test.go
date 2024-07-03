@@ -7,6 +7,10 @@ import (
 // Every function responsible for doing a state transition
 // should adhere to this function signature
 type StateTransitionFunc func(m *testCommon.TestConfig, actor Actor, data *SimulationData, iteration int) error
+type StateTransition struct {
+	name string
+	f    StateTransitionFunc
+}
 
 // The list of possible state transitions we can take are:
 //
@@ -28,21 +32,10 @@ type StateTransitionFunc func(m *testCommon.TestConfig, actor Actor, data *Simul
 //
 // IMPORTANT: if you change getTransitionNameFromIndex function, you must
 // also change this function to match it!!
-func allTransitions() []StateTransitionFunc {
-	return []StateTransitionFunc{
-		createTopic,
+func allTransitions() []StateTransition {
+	return []StateTransition{
+		{"createTopic", createTopic},
 	}
-}
-
-// for debugging it's helpful to be able to print the name of functions
-// based on which one we picked in pickActorStateTransition
-// IMPORTANT: if you change allTransitions function, you must
-// also change this function to match it!!
-func getTransitionNameFromIndex(index int) string {
-	if index == 0 {
-		return "createTopic"
-	}
-	return ""
 }
 
 // state machine dependencies for valid transitions
@@ -61,7 +54,7 @@ func getTransitionNameFromIndex(index int) string {
 // collectDelegatorRewards: delegateStake, fundTopic, InsertBulkWorkerPayload, InsertBulkReputerPayload
 // InsertBulkWorkerPayload: RegisterWorkerForTopic, FundTopic
 // InsertBulkReputerPayload: RegisterReputerForTopic, InsertBulkWorkerPayload
-func isPossibleTransition(actor Actor, data *SimulationData, transition StateTransitionFunc) bool {
+func isPossibleTransition(actor Actor, data *SimulationData, transition StateTransition) bool {
 	return true
 }
 
@@ -77,9 +70,9 @@ func pickActorStateTransition(
 		randIndex := m.Client.Rand.Intn(len(transitions))
 		selectedTransition := transitions[randIndex]
 		if isPossibleTransition(actor, data, selectedTransition) {
-			return selectedTransition
+			return selectedTransition.f
 		} else {
-			iterationLog(m.T, iteration, "Transition not possible: ", actor, " ", getTransitionNameFromIndex(randIndex))
+			iterationLog(m.T, iteration, "Transition not possible: ", actor, " ", selectedTransition.name)
 		}
 	}
 }

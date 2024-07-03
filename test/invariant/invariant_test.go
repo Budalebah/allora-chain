@@ -37,7 +37,7 @@ func TestInvariantTestSuite(t *testing.T) {
 	maxReputersPerTopic := testCommon.LookupEnvInt(t, "MAX_REPUTERS_PER_TOPIC", 20)
 	maxWorkersPerTopic := testCommon.LookupEnvInt(t, "MAX_WORKERS_PER_TOPIC", 20)
 	topicsMax := testCommon.LookupEnvInt(t, "TOPICS_MAX", 100)
-	epochLength := testCommon.LookupEnvInt(t, "EPOCH_LENGTH", 5)
+	epochLength := testCommon.LookupEnvInt(t, "EPOCH_LENGTH", 12)
 
 	t.Log("Max Actors: ", numActors)
 	t.Log("Max Iterations: ", maxIterations)

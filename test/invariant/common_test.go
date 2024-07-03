@@ -8,10 +8,15 @@ import (
 	"github.com/ignite/cli/v28/ignite/pkg/cosmosaccount"
 )
 
-// simpler wrapper for consistent logging style
+// log wrapper for consistent logging style
 func iterationLog(t *testing.T, iteration int, a ...any) {
 	t.Log(fmt.Sprint("[ITER ", iteration, "]: ", a))
 }
+
+//// warning wrapper for consistent logging style
+//func iterationWarn(t *testing.T, iteration int, a ...any) {
+//	iterationLog(t, iteration, "WARNING: ", a)
+//}
 
 // an actor in the simulation has a
 // human readable name,

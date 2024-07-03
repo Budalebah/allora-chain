@@ -2,18 +2,7 @@ package invariant_test
 
 import (
 	testCommon "github.com/allora-network/allora-chain/test/common"
-	"github.com/stretchr/testify/require"
 )
-
-// SimulationData stores the active set of states we think we're in
-// so that we can choose to take a transition that is valid
-type SimulationData struct {
-	numTopics           uint64
-	maxTopics           uint64
-	maxReputersPerTopic int
-	maxWorkersPerTopic  int
-	epochLength         int
-}
 
 // run the outer loop of the simulator
 func simulate(
@@ -51,13 +40,11 @@ func simulate(
 		maxTopics:           uint64(topicsMax),
 		maxReputersPerTopic: maxReputersPerTopic,
 		maxWorkersPerTopic:  maxWorkersPerTopic,
-		epochLength:         epochLength,
+		epochLength:         int64(epochLength),
 	}
 	// every iteration, pick an actor,
 	// then pick a state transition function for that actor to do
 	for i := 0; i < maxIterations; i++ {
-		iterationLog(m.T, i, "starting")
-		require.NotNil(m.T, m.Client.Rand)
 		actorNum := m.Client.Rand.Intn(numActors)
 		iterationActor := actorsList[actorNum]
 		stateTransitionFunc := pickActorStateTransition(m, i, iterationActor, &simulationData)
