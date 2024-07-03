@@ -1,6 +1,8 @@
 package invariant_test
 
 import (
+	"sync"
+
 	testCommon "github.com/allora-network/allora-chain/test/common"
 )
 
@@ -29,28 +31,34 @@ func simulate(
 	err = fundActors(
 		m,
 		faucet,
-		actorsList,
+		actorsMap,
 		preFundAmount,
 	)
 	if err != nil {
 		m.T.Fatal(err)
 	}
 	simulationData := SimulationData{
+		lock:                sync.Mutex{},
 		numTopics:           0,
 		maxTopics:           uint64(topicsMax),
 		maxReputersPerTopic: maxReputersPerTopic,
 		maxWorkersPerTopic:  maxWorkersPerTopic,
 		epochLength:         int64(epochLength),
+		actors:              actorsList,
 	}
+	var wg sync.WaitGroup
 	// every iteration, pick an actor,
 	// then pick a state transition function for that actor to do
 	for i := 0; i < maxIterations; i++ {
 		actorNum := m.Client.Rand.Intn(numActors)
 		iterationActor := actorsList[actorNum]
 		stateTransitionFunc := pickActorStateTransition(m, i, iterationActor, &simulationData)
-		err := stateTransitionFunc(m, iterationActor, &simulationData, i)
+		wg.Add(1)
+		go stateTransitionFunc(&wg, m, iterationActor, &simulationData, i)
 		if err != nil {
 			m.T.Fatal(err)
 		}
 	}
+
+	wg.Wait()
 }

@@ -30,13 +30,13 @@ func createNewActor(m *testCommon.TestConfig, numActors int) Actor {
 	}
 }
 
-// creates a list of actors
+// creates a list of actors both as a map and a slice, returns both
 func createActors(m *testCommon.TestConfig, numToCreate int) []Actor {
-	actors := make([]Actor, numToCreate)
+	actorsList := make([]Actor, numToCreate)
 	for i := 0; i < numToCreate; i++ {
-		actors[i] = createNewActor(m, i)
+		actorsList[i] = createNewActor(m, i)
 	}
-	return actors
+	return actorsList
 }
 
 // fund every target address from the sender in amount coins

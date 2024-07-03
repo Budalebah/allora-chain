@@ -13,6 +13,7 @@ type SimulationData struct {
 	maxReputersPerTopic int
 	maxWorkersPerTopic  int
 	epochLength         int64
+	actors              []Actor
 }
 
 // incrementCountTopics increments the number of topics in the simulation data

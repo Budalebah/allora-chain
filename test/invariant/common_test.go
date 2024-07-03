@@ -3,20 +3,19 @@ package invariant_test
 import (
 	"fmt"
 	"strconv"
+	"sync"
 	"testing"
 
+	testCommon "github.com/allora-network/allora-chain/test/common"
+	sdktypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/ignite/cli/v28/ignite/pkg/cosmosaccount"
+	"github.com/ignite/cli/v28/ignite/pkg/cosmosclient"
 )
 
 // log wrapper for consistent logging style
 func iterationLog(t *testing.T, iteration int, a ...any) {
 	t.Log(fmt.Sprint("[ITER ", iteration, "]: ", a))
 }
-
-//// warning wrapper for consistent logging style
-//func iterationWarn(t *testing.T, iteration int, a ...any) {
-//	iterationLog(t, iteration, "WARNING: ", a)
-//}
 
 // an actor in the simulation has a
 // human readable name,
@@ -26,6 +25,7 @@ type Actor struct {
 	name string
 	addr string
 	acc  cosmosaccount.Account
+	lock sync.Mutex
 }
 
 // stringer for actor
@@ -41,4 +41,13 @@ func getFaucetName(seed int) string {
 // generates an actors name from seed and index
 func getActorName(seed int, actorIndex int) string {
 	return "run" + strconv.Itoa(seed) + "_actor" + strconv.Itoa(actorIndex)
+}
+
+// the actors can have nonce issues if you parallelize using them,
+// so make sure to check the mutex before sending the tx
+func broadcastWithActor(m *testCommon.TestConfig, actor Actor, msgs ...sdktypes.Msg) (cosmosclient.Response, error) {
+	actor.lock.Lock()
+	ret, err := m.Client.BroadcastTx(m.Ctx, actor.acc, msgs...)
+	actor.lock.Unlock()
+	return ret, err
 }

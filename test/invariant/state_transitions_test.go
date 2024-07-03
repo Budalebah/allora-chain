@@ -1,12 +1,16 @@
 package invariant_test
 
 import (
+	"sync"
+
 	testCommon "github.com/allora-network/allora-chain/test/common"
 )
 
 // Every function responsible for doing a state transition
 // should adhere to this function signature
-type StateTransitionFunc func(m *testCommon.TestConfig, actor Actor, data *SimulationData, iteration int) error
+type StateTransitionFunc func(wg *sync.WaitGroup, m *testCommon.TestConfig, actor Actor, data *SimulationData, iteration int)
+
+// keep track of the name of the state transition as well as the function
 type StateTransition struct {
 	name string
 	f    StateTransitionFunc

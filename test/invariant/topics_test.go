@@ -2,6 +2,7 @@ package invariant_test
 
 import (
 	"fmt"
+	"sync"
 
 	alloraMath "github.com/allora-network/allora-chain/math"
 	testCommon "github.com/allora-network/allora-chain/test/common"
@@ -10,7 +11,8 @@ import (
 )
 
 // Use actor to create a new topic
-func createTopic(m *testCommon.TestConfig, actor Actor, data *SimulationData, iteration int) error {
+func createTopic(wg *sync.WaitGroup, m *testCommon.TestConfig, actor Actor, data *SimulationData, iteration int) {
+	defer wg.Done()
 	iterationLog(m.T, iteration, actor, "creating new topic")
 	createTopicRequest := &emissionstypes.MsgCreateNewTopic{
 		Creator:         actor.addr,
@@ -28,7 +30,7 @@ func createTopic(m *testCommon.TestConfig, actor Actor, data *SimulationData, it
 		Tolerance:       alloraMath.MustNewDecFromString("0.01"),
 	}
 
-	txResp, err := m.Client.BroadcastTx(m.Ctx, actor.acc, createTopicRequest)
+	txResp, err := broadcastWithActor(m, actor, createTopicRequest)
 	require.NoError(m.T, err)
 
 	_, err = m.Client.WaitForTx(m.Ctx, txResp.TxHash)
@@ -41,6 +43,4 @@ func createTopic(m *testCommon.TestConfig, actor Actor, data *SimulationData, it
 	incrementCountTopics(data)
 
 	iterationLog(m.T, iteration, actor, " created topic ", createTopicResponse.TopicId)
-
-	return nil
 }
