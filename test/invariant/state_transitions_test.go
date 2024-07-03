@@ -8,8 +8,6 @@ import (
 // should adhere to this function signature
 type StateTransitionFunc func(m *testCommon.TestConfig, actor Actor, data *SimulationData, iteration int) error
 
-// pickActorStateTransition picks a random state transition to take and returns which one it picked.
-//
 // The list of possible state transitions we can take are:
 //
 // create a new topic,
@@ -28,6 +26,25 @@ type StateTransitionFunc func(m *testCommon.TestConfig, actor Actor, data *Simul
 // produce an inference (insert a bulk worker payload),
 // produce reputation scores (insert a bulk reputer payload)
 //
+// IMPORTANT: if you change getTransitionNameFromIndex function, you must
+// also change this function to match it!!
+func allTransitions() []StateTransitionFunc {
+	return []StateTransitionFunc{
+		createTopic,
+	}
+}
+
+// for debugging it's helpful to be able to print the name of functions
+// based on which one we picked in pickActorStateTransition
+// IMPORTANT: if you change allTransitions function, you must
+// also change this function to match it!!
+func getTransitionNameFromIndex(index int) string {
+	if index == 0 {
+		return "createTopic"
+	}
+	return ""
+}
+
 // state machine dependencies for valid transitions
 //
 // fundTopic: CreateTopic
@@ -44,16 +61,25 @@ type StateTransitionFunc func(m *testCommon.TestConfig, actor Actor, data *Simul
 // collectDelegatorRewards: delegateStake, fundTopic, InsertBulkWorkerPayload, InsertBulkReputerPayload
 // InsertBulkWorkerPayload: RegisterWorkerForTopic, FundTopic
 // InsertBulkReputerPayload: RegisterReputerForTopic, InsertBulkWorkerPayload
+func isPossibleTransition(actor Actor, data *SimulationData, transition StateTransitionFunc) bool {
+	return true
+}
+
+// pickActorStateTransition picks a random state transition to take and returns which one it picked.
 func pickActorStateTransition(
 	m *testCommon.TestConfig,
+	iteration int,
 	actor Actor,
 	data *SimulationData,
 ) StateTransitionFunc {
-	return createTopic
-}
-
-// Use actor to create a new topic
-func createTopic(m *testCommon.TestConfig, actor Actor, data *SimulationData, iteration int) error {
-	iterationLog(m.T, iteration, actor, " is creating a new topic")
-	return nil
+	transitions := allTransitions()
+	for {
+		randIndex := m.Client.Rand.Intn(len(transitions))
+		selectedTransition := transitions[randIndex]
+		if isPossibleTransition(actor, data, selectedTransition) {
+			return selectedTransition
+		} else {
+			iterationLog(m.T, iteration, "Transition not possible: ", actor, " ", getTransitionNameFromIndex(randIndex))
+		}
+	}
 }

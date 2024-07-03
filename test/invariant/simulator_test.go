@@ -60,7 +60,7 @@ func simulate(
 		require.NotNil(m.T, m.Client.Rand)
 		actorNum := m.Client.Rand.Intn(numActors)
 		iterationActor := actorsList[actorNum]
-		stateTransitionFunc := pickActorStateTransition(m, iterationActor, &simulationData)
+		stateTransitionFunc := pickActorStateTransition(m, i, iterationActor, &simulationData)
 		err := stateTransitionFunc(m, iterationActor, &simulationData, i)
 		if err != nil {
 			m.T.Fatal(err)
