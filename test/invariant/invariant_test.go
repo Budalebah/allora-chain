@@ -19,7 +19,7 @@ func TestInvariantTestSuite(t *testing.T) {
 
 	t.Log(">>> Setting up connection to local node <<<")
 
-	seed := testCommon.LookupEnvInt(t, "SEED", 0)
+	seed := testCommon.LookupEnvInt(t, "SEED", 1)
 	rpcMode := testCommon.LookupRpcMode(t, "RPC_MODE", testCommon.SingleRpc)
 	rpcEndpoints := testCommon.LookupEnvStringArray("RPC_URLS", []string{"http://localhost:26657"})
 

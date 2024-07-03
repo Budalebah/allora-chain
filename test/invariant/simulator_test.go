@@ -2,6 +2,7 @@ package invariant_test
 
 import (
 	testCommon "github.com/allora-network/allora-chain/test/common"
+	"github.com/stretchr/testify/require"
 )
 
 // SimulationData stores the active set of states we think we're in
@@ -56,6 +57,7 @@ func simulate(
 	// then pick a state transition function for that actor to do
 	for i := 0; i < maxIterations; i++ {
 		iterationLog(m.T, i, "starting")
+		require.NotNil(m.T, m.Client.Rand)
 		actorNum := m.Client.Rand.Intn(numActors)
 		iterationActor := actorsList[actorNum]
 		stateTransitionFunc := pickActorStateTransition(m, iterationActor, &simulationData)

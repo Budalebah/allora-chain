@@ -30,10 +30,10 @@ func (a Actor) String() string {
 
 // get the faucet name based on the seed for this test run
 func getFaucetName(seed int) string {
-	return "invariant" + strconv.Itoa(seed) + "_faucet"
+	return "run" + strconv.Itoa(seed) + "_faucet"
 }
 
 // generates an actors name from seed and index
 func getActorName(seed int, actorIndex int) string {
-	return "invariant" + strconv.Itoa(seed) + "_actor" + strconv.Itoa(actorIndex)
+	return "run" + strconv.Itoa(seed) + "_actor" + strconv.Itoa(actorIndex)
 }
