@@ -33,13 +33,13 @@ func TestInvariantTestSuite(t *testing.T) {
 
 	// Read env vars with defaults
 	maxIterations := testCommon.LookupEnvInt(t, "MAX_ITERATIONS", 1000)
-	maxActors := testCommon.LookupEnvInt(t, "MAX_ACTORS", 100)
+	numActors := testCommon.LookupEnvInt(t, "NUM_ACTORS", 100)
 	maxReputersPerTopic := testCommon.LookupEnvInt(t, "MAX_REPUTERS_PER_TOPIC", 20)
 	maxWorkersPerTopic := testCommon.LookupEnvInt(t, "MAX_WORKERS_PER_TOPIC", 20)
 	topicsMax := testCommon.LookupEnvInt(t, "TOPICS_MAX", 100)
 	epochLength := testCommon.LookupEnvInt(t, "EPOCH_LENGTH", 5)
 
-	t.Log("Max Actors: ", maxActors)
+	t.Log("Max Actors: ", numActors)
 	t.Log("Max Iterations: ", maxIterations)
 	t.Log("Max Reputers per topic: ", maxReputersPerTopic)
 	t.Log("Max Workers per topic: ", maxWorkersPerTopic)
@@ -49,7 +49,7 @@ func TestInvariantTestSuite(t *testing.T) {
 	simulate(
 		&testConfig,
 		maxIterations,
-		maxActors,
+		numActors,
 		maxReputersPerTopic,
 		maxWorkersPerTopic,
 		topicsMax,

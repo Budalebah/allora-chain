@@ -6,7 +6,7 @@ import (
 
 // Every function responsible for doing a state transition
 // should adhere to this function signature
-type StateTransitionFunc func(m *testCommon.TestConfig, data *SimulationData) error
+type StateTransitionFunc func(m *testCommon.TestConfig, actor Actor, data *SimulationData, iteration int) error
 
 // pickActorStateTransition picks a random state transition to take and returns which one it picked.
 //
@@ -44,10 +44,16 @@ type StateTransitionFunc func(m *testCommon.TestConfig, data *SimulationData) er
 // collectDelegatorRewards: delegateStake, fundTopic, InsertBulkWorkerPayload, InsertBulkReputerPayload
 // InsertBulkWorkerPayload: RegisterWorkerForTopic, FundTopic
 // InsertBulkReputerPayload: RegisterReputerForTopic, InsertBulkWorkerPayload
-func pickActorStateTransition(m *testCommon.TestConfig, data *SimulationData) StateTransitionFunc {
+func pickActorStateTransition(
+	m *testCommon.TestConfig,
+	actor Actor,
+	data *SimulationData,
+) StateTransitionFunc {
 	return createTopic
 }
 
-func createTopic(m *testCommon.TestConfig, data *SimulationData) error {
+// Use actor to create a new topic
+func createTopic(m *testCommon.TestConfig, actor Actor, data *SimulationData, iteration int) error {
+	iterationLog(m.T, iteration, actor, " is creating a new topic")
 	return nil
 }
